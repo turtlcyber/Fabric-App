@@ -6,6 +6,7 @@ const fs = require("fs");
 const { port } = require("../config/config");
 const fabricModel = require("../models/fabricModel");
 const { isValidObjectId } = require("mongoose");
+let catImgFolder = path.join(__dirname, "..", "..", "categoryImages");
 
 // ADD CATEGORY
 const addCategory = async (req, res) => {
@@ -18,7 +19,6 @@ const addCategory = async (req, res) => {
             return res.status(400).send({ status: false, message: "No category Image uploaded" });
         };
 
-        let catImgFolder = path.join(__dirname, "..", "..", "categoryImages");
         if (!fs.existsSync(catImgFolder)) {
             fs.mkdirSync(catImgFolder);
         };
@@ -181,11 +181,11 @@ const updateCategory = async (req, res) => {
             let imgRelativePath = "/categoryImages/";
             let imgUniqName = uuid.v4() + "." + category_image.name.split(".").pop();
             let imgFullUrl = `http://${currentIpAddress}:${port}${imgRelativePath}`;
-            let imgSavingPath = path.join(__dirname, "..", "..", "categaryImages", imgUniqName);
+            let imgSavingPath = path.join(catImgFolder, imgUniqName);
 
             let oldImgName = category.category_image.imageName;
             if (oldImgName) {
-                let oldImgPath = path.join(__dirname, "..", "..", "categoryImages", oldImgName);
+                let oldImgPath = path.join(catImgFolder, oldImgName);
                 if (fs.existsSync(oldImgPath)) {
                     fs.unlinkSync(oldImgPath);
                 };
@@ -226,6 +226,14 @@ const deleteCategory = async (req, res) => {
 
         if (!category) {
             return res.status(404).send({ status: false, message: "No category found with this category Id"})
+        };
+
+        let oldImgName = category.category_image.fileName;
+        if (oldImgName) {
+            let oldImgPath = path.join(catImgFolder, oldImgName);
+            if (fs.existsSync(oldImgPath)) {
+                fs.unlinkSync(oldImgPath);
+            };
         };
 
         await categoryModel.deleteOne({ _id: categoryId });

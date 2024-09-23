@@ -7,6 +7,8 @@ const fs = require("fs");
 const { port, adminSecretKey } = require("../config/config");
 const { isValidObjectId } = require("mongoose");
 
+let fabricImgFolder = path.join(__dirname, "..", "..", "fabricImages");
+
 
 // ADD FABRIC
 const addFabric = async (req, res) => {
@@ -94,8 +96,6 @@ const addUpdateFabricImages = async (req, res) => {
         if (!itemImage) {
             return res.status(400).send({ status: false, message: "No property image uploaded" });
         };
-
-        let fabricImgFolder = path.join(__dirname, "..", "..", "fabricImages");
 
         if (!fs.existsSync(fabricImgFolder)) {
             fs.mkdirSync(fabricImgFolder);
@@ -191,7 +191,7 @@ const deleteFabricImage = async (req, res) => {
             if ( imageId === img._id.toString() ) {
                 let oldImage = img.fileName;
                 if (oldImage) {
-                    let oldImgPath = path.join(__dirname, "..", "..", "fabricImages", oldImage);
+                    let oldImgPath = path.join(fabricImgFolder, oldImage);
                     if (fs.existsSync(oldImgPath)) {
                         fs.unlinkSync(oldImgPath);
                     }
@@ -368,7 +368,7 @@ const deleteFabric = async (req, res) => {
         for (let img of f.fabricImages) {
             let oldImg = img.fileName;
             if (oldImg) {
-                let oldImgPath = path.join(__dirname, "..", "..", "fabricImages", oldImg);
+                let oldImgPath = path.join(fabricImgFolder, oldImg);
                 if (fs.existsSync(oldImgPath)) {
                     fs.unlinkSync(oldImgPath);
                 };

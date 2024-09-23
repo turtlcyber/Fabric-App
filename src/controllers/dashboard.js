@@ -11,6 +11,8 @@ const { isValidObjectId } = require("mongoose");
 const fabricModel = require("../models/fabricModel");
 const userModel = require("../models/userModel");
 
+let bannerFolder = path.join(__dirname, "..", "..", "bannerImages");
+
 // DASHBOARD API
 const getDashboard = async (req, res) => {
     try {
@@ -117,7 +119,6 @@ const updateBannerImages = async (req, res) => {
             return res.status(400).send({ status: false, message: "No banner image uploaded" });
         }
 
-        let bannerFolder = path.join(__dirname, "..", "..", "bannerImages");
         if (!fs.existsSync(bannerFolder)) {
             fs.mkdirSync(bannerFolder);
         };
@@ -210,7 +211,7 @@ const deleteBannerImage = async (req, res) => {
 
                     let imgName = bannerObj.bannerImages[i].imageName;
                     if (imgName) {
-                        let imgPath = path.join(__dirname, "..", "..", "bannerImages", imgName);
+                        let imgPath = path.join(bannerFolder, imgName);
                         if (fs.existsSync(imgPath)) {
                             fs.unlinkSync(imgPath);
                         };
