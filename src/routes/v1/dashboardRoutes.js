@@ -9,7 +9,7 @@ const {
 } = require('../../controllers/dashboard');
 
 // GET DASHBOARD
-// router.get("/api/v1/getDashboard/:userId?", getDashboard);
+router.get("/api/v1/getDashboard/:userId?", getDashboard);
 
 
 // GET ADMIN DASHBOARD

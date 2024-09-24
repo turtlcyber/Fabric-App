@@ -10,6 +10,7 @@ const { port, adminSecretKey } = require("../config/config");
 const { isValidObjectId } = require("mongoose");
 const fabricModel = require("../models/fabricModel");
 const userModel = require("../models/userModel");
+const checkoutModel = require('../models/checkoutModel');
 
 let bannerFolder = path.join(__dirname, "..", "..", "bannerImages");
 
@@ -18,53 +19,23 @@ const getDashboard = async (req, res) => {
     try {
         let { userId } = req.params;
 
-        let enquiries;
-        let enqArr = [];
-        if (userId) {
-            enquiries = await enquiryModel.find({ userId });
-
-            if (enquiries.length) {
-                for (let enquiry of enquiries) {
-                    let property = await propertyModel.findOne({ _id: enquiry.propertyId.toString() });
-
-                    let enqObj = {
-                        enquiry: enquiry,
-                        property: property
-                    };
-
-                    enqArr.push(enqObj);
-                }
-            }
-        }
-
         let categories = await categoryModel.find({});
-
-        let propertyArr = [];
-        if (categories.length) {
-            for (let category of categories) {
-                let propertyObj = await propertyModel.find({categoryId: category._id}).limit(5);
-
-                if (propertyObj.length) {
-                    let categoryObj = {
-                        category,
-                        property: propertyObj
-                    }
-                    propertyArr.push(categoryObj);
-                };
-            };
-        };
 
         let bannerObj = await bannerImageModel.findOne();
 
         let bannerImages = bannerObj.bannerImages;
 
+        let myAllOrders = null;
+        if (userId) {
+            myAllOrders = await checkoutModel.find({ customerId: userId }); 
+        };
+
         return res.status(200).send({
             status: true,
             message: "Success",
             categoryList: categories,
-            propertyList: propertyArr,
             bannerImages: bannerImages,
-            enquiryList: enqArr
+            myAllOrders,
         });
     } catch (error) {
         return res.status(400).send({ status: false, message: error.message });
@@ -78,11 +49,13 @@ const getAdminDashboard = async (req, res) => {
         let categories = await categoryModel.find({});
         let bannerObj = await bannerImageModel.findOne();
         let bannerImages = bannerObj.bannerImages;
+        let allOrders = await checkoutModel.find({});
         return res.status(200).send({
             status: true,
             message: "Success",
             categoryList: categories,
             bannerImages: bannerImages,
+            allOrders
         });
 
     } catch (error) {

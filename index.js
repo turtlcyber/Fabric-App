@@ -17,6 +17,7 @@ app.use(fileUpload());
 app.use(cors());
 
 const adminRoutes = require('./src/routes/v1/adminRoutes');
+const checkoutRoutes = require('./src/routes/v1/checkoutRoutes');
 const userRoutes = require('./src/routes/v1/userRoutes');
 const fabricRoutes = require('./src/routes/v1/fabricRoutes');
 const categoryRoutes = require('./src/routes/v1/categoryRoutes');
@@ -35,6 +36,7 @@ app.use("/", fabricRoutes);
 app.use("/", categoryRoutes);
 app.use("/", dashboardRoutes);
 app.use("/", enquiryRoutes);
+app.use("/", checkoutRoutes);
 
 
 app.get("/", (req, res) => {
